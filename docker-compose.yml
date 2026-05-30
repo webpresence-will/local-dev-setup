@@ -12,17 +12,24 @@ services:
       - php74
       - php85
       - mysql
+      - phpmyadmin
 
   php74:
     container_name: "php74"
-    image: php:7.4-fpm
+    build:
+      context: "./php"
+      args:
+        PHP_VERSION: "7.4"
     volumes:
       - ./php/74/php.ini:/usr/local/etc/php/conf.d/99-custom.ini
       - ${SITES_PATH}:/var/www/html
 
   php85:
     container_name: "php85"
-    image: php:8.5-fpm
+    build:
+      context: "./php"
+      args:
+        PHP_VERSION: "8.5"
     volumes:
       - ./php/85/php.ini:/usr/local/etc/php/conf.d/99-custom.ini
       - ${SITES_PATH}:/var/www/html
@@ -31,6 +38,7 @@ services:
     container_name: "mysql"
     image: mysql:8.4
     restart: unless-stopped
+    command: --lower_case_table_names=0
 
     ports:
       - "0.0.0.0:3306:3306"
@@ -38,4 +46,18 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
 
     volumes:
-      - ${MYSQL_DATA_PATH}:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    container_name: "phpmyadmin"
+    image: phpmyadmin/phpmyadmin:latest
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
+    name: mysql_data

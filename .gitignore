@@ -6,3 +6,6 @@ nginx/conf.d/*.conf
 
 # Local development environment configuration
 .env
+
+# PHPMyAdmin nginx
+!nginx/conf.d/phpmyadmin.conf

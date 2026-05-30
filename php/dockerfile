@@ -1,0 +1,19 @@
+ARG PHP_VERSION=8.5
+FROM php:${PHP_VERSION}-fpm
+
+# Install system deps
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    libpng-dev \
+    libicu-dev \
+    zip \
+    unzip \
+ && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions (shared across versions)
+RUN docker-php-ext-install \
+    mysqli \
+    pdo_mysql \
+    zip \
+    intl \
+    gd
