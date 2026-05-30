@@ -1,0 +1,8 @@
+# Per site nginx
+nginx/conf.d/*.conf
+
+# Mac index
+.DS_Store
+
+# Local development environment configuration
+.env

@@ -1,0 +1,41 @@
+services:
+  nginx:
+    container_name: "nginx"
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/snippets:/etc/nginx/snippets
+      - ${SITES_PATH}:/var/www/html
+    depends_on:
+      - php74
+      - php85
+      - mysql
+
+  php74:
+    container_name: "php74"
+    image: php:7.4-fpm
+    volumes:
+      - ./php/74/php.ini:/usr/local/etc/php/conf.d/99-custom.ini
+      - ${SITES_PATH}:/var/www/html
+
+  php85:
+    container_name: "php85"
+    image: php:8.5-fpm
+    volumes:
+      - ./php/85/php.ini:/usr/local/etc/php/conf.d/99-custom.ini
+      - ${SITES_PATH}:/var/www/html
+
+  mysql:
+    container_name: "mysql"
+    image: mysql:8.4
+    restart: unless-stopped
+
+    ports:
+      - "0.0.0.0:3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+
+    volumes:
+      - ${MYSQL_DATA_PATH}:/var/lib/mysql
