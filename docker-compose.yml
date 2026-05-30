@@ -18,6 +18,8 @@ services:
   php74:
     container_name: "php74"
     restart: unless-stopped
+    extra_hosts:
+      - "localhost:host-gateway"
     build:
       context: "./php"
       args:
@@ -29,6 +31,8 @@ services:
   php85:
     container_name: "php85"
     restart: unless-stopped
+    extra_hosts:
+      - "localhost:host-gateway"
     build:
       context: "./php"
       args:
