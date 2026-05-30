@@ -9,3 +9,6 @@ nginx/conf.d/*.conf
 
 # PHPMyAdmin nginx
 !nginx/conf.d/phpmyadmin.conf
+
+# Mailpit nginx
+!nginx/conf.d/mailpit.conf

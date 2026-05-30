@@ -2,6 +2,7 @@ services:
   nginx:
     container_name: "nginx"
     image: nginx:alpine
+    restart: unless-stopped
     ports:
       - "80:80"
     volumes:
@@ -16,6 +17,7 @@ services:
 
   php74:
     container_name: "php74"
+    restart: unless-stopped
     build:
       context: "./php"
       args:
@@ -26,6 +28,7 @@ services:
 
   php85:
     container_name: "php85"
+    restart: unless-stopped
     build:
       context: "./php"
       args:
@@ -57,6 +60,14 @@ services:
       PMA_PORT: 3306
     depends_on:
       - mysql
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    restart: unless-stopped
 
 volumes:
   mysql_data:
