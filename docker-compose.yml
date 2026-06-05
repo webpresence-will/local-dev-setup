@@ -28,6 +28,19 @@ services:
       - ./php/74/php.ini:/usr/local/etc/php/conf.d/99-custom.ini
       - ${SITES_PATH}:/var/www/html
 
+  php84:
+    container_name: "php84"
+    restart: unless-stopped
+    extra_hosts:
+      - "localhost:host-gateway"
+    build:
+      context: "./php"
+      args:
+        PHP_VERSION: "8.4"
+    volumes:
+      - ./php/84/php.ini:/usr/local/etc/php/conf.d/99-custom.ini
+      - ${SITES_PATH}:/var/www/html
+
   php85:
     container_name: "php85"
     restart: unless-stopped
