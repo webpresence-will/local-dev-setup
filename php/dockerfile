@@ -1,16 +1,16 @@
 ARG PHP_VERSION=8.5
 FROM php:${PHP_VERSION}-fpm
 
-# Install system deps
+# System Dependencies
 RUN apt-get update && apt-get install -y \
     libzip-dev \
     libpng-dev \
     libicu-dev \
     zip \
     unzip \
- && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions (shared across versions)
+# PHP extensions
 RUN docker-php-ext-install \
     mysqli \
     pdo_mysql \
@@ -19,4 +19,14 @@ RUN docker-php-ext-install \
     gd \
     sockets
 
+# Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# WP CLI
+RUN curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp \
+    && chmod +x /usr/local/bin/wp \
+    && wp --info
+
+# User fix
+RUN useradd -m -u 1000 developer && chown -R developer:developer /var/www
+USER developer
