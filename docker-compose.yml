@@ -27,7 +27,7 @@ services:
     volumes:
       - ./php/74/php.ini:/usr/local/etc/php/conf.d/99-custom.ini
       - ${SITES_PATH}:/var/www/html
-      - ${COMPOSER_AUTH_PATH}:/root/.composer/auth.json:ro
+      - ${COMPOSER_AUTH_PATH}:/home/developer/.composer/auth.json:ro
 
   php84:
     container_name: "php84"
@@ -41,7 +41,7 @@ services:
     volumes:
       - ./php/84/php.ini:/usr/local/etc/php/conf.d/99-custom.ini
       - ${SITES_PATH}:/var/www/html
-      - ${COMPOSER_AUTH_PATH}:/root/.composer/auth.json:ro
+      - ${COMPOSER_AUTH_PATH}:/home/developer/.composer/auth.json:ro
 
   php85:
     container_name: "php85"
@@ -55,7 +55,7 @@ services:
     volumes:
       - ./php/85/php.ini:/usr/local/etc/php/conf.d/99-custom.ini
       - ${SITES_PATH}:/var/www/html
-      - ${COMPOSER_AUTH_PATH}:/root/.composer/auth.json:ro
+      - ${COMPOSER_AUTH_PATH}:/home/developer/.composer/auth.json:ro
 
   mysql:
     container_name: "mysql"
