@@ -1,6 +1,12 @@
 # Per site nginx
 nginx/conf.d/*.conf
 
+# Nginx Certificates
+nginx/certificates
+
+# Step CA
+step_ca_data/
+
 # Mac index
 .DS_Store
 
@@ -13,3 +19,6 @@ nginx/conf.d/*.conf
 
 # Mailpit nginx
 !nginx/conf.d/mailpit.conf
+
+# Main compose file
+/docker-compose.yml
