@@ -13,6 +13,8 @@ services:
       - ${SITES_PATH}:/var/www/html
     depends_on:
       - php74
+      - php80
+      - php81
       - php84
       - php85
       - mysql

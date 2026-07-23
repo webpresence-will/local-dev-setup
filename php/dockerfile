@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
 
 # PHP extensions
 RUN docker-php-ext-install \
+    bcmath \
     mysqli \
     pdo_mysql \
     zip \
@@ -29,4 +30,5 @@ RUN curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-
 
 # User fix
 RUN useradd -m -u 1000 developer && chown -R developer:developer /var/www
+
 USER developer
