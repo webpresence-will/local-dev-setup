@@ -1,6 +1,9 @@
 # Per site nginx
 nginx/conf.d/*.conf
 
+# IDE
+.idea/
+
 # Nginx Certificates
 nginx/certificates
 

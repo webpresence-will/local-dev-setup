@@ -58,6 +58,20 @@ services:
       - ${SITES_PATH}:/var/www/html
       - ${COMPOSER_AUTH_PATH}:/home/developer/.composer/auth.json:ro
 
+  php80:
+    container_name: "php80"
+    restart: unless-stopped
+    extra_hosts:
+      - "localhost:host-gateway"
+    build:
+      context: "./php"
+      args:
+        PHP_VERSION: "8.0"
+    volumes:
+      - ./php/80/php.ini:/usr/local/etc/php/conf.d/99-custom.ini
+      - ${SITES_PATH}:/var/www/html
+      - ${COMPOSER_AUTH_PATH}:/home/developer/.composer/auth.json:ro
+
   php84:
     container_name: "php84"
     restart: unless-stopped
