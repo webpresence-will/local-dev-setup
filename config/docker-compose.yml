@@ -12,39 +12,52 @@ services:
       - ./nginx/certificates:/etc/nginx/certs:ro
       - ${SITES_PATH}:/var/www/html
     depends_on:
-      - php74
-      - php80
-      - php81
-      - php84
-      - php85
-      - mysql
-      - phpmyadmin
-      - cert-init
+      php74:
+        condition: service_started
+      php84:
+        condition: service_started
+      php85:
+        condition: service_started
+      mysql:
+        condition: service_started
+      phpmyadmin:
+        condition: service_started
+      cert-init:
+        condition: service_completed_successfully
 
   step-ca:
     image: smallstep/step-ca:latest
     container_name: step-ca
     restart: unless-stopped
     environment:
-    - DOCKER_STEPCA_INIT_NAME=Local Docker CA
-    - DOCKER_STEPCA_INIT_DNS_NAMES=step-ca,localhost
-    - DOCKER_STEPCA_INIT_PASSWORD=change-me-strong-password
-    - DOCKER_STEPCA_INIT_ACME=true
+      - DOCKER_STEPCA_INIT_NAME=Local Docker CA
+      - DOCKER_STEPCA_INIT_DNS_NAMES=step-ca,localhost
+      - DOCKER_STEPCA_INIT_PASSWORD=change-me-strong-password
+      - DOCKER_STEPCA_INIT_ACME=true
     volumes:
-    - ./step_ca_data:/home/step
+      - ./step_ca_data:/home/step
+      - ./step-ca/start.sh:/usr/local/bin/start-local-ca:ro
     ports:
-    - "9000:9000"
+      - "9000:9000"
+    command: ["/bin/sh", "/usr/local/bin/start-local-ca"]
+    healthcheck:
+      test: ["CMD", "step", "ca", "health", "--ca-url", "https://localhost:9000", "--root", "/home/step/certs/root_ca.crt"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
 
   cert-init:
     image: smallstep/step-cli:latest
     container_name: cert-init
     depends_on:
-    - step-ca
+      step-ca:
+        condition: service_healthy
     volumes:
-    - ./step_ca_data:/step-ca:ro
-    - ./nginx/certificates:/certs
-    entrypoint: /bin/sh
-    command: -c "step ca bootstrap --ca-url https://step-ca:9000 --fingerprint "$$(step certificate fingerprint /step-ca/certs/root_ca.crt)" --install=false --context local && step ca certificate gas-care.test /certs/gas-care.test.crt /certs/gas-care.test.key --ca-url https://step-ca:9000 --root /step-ca/certs/root_ca.crt --provisioner admin --provisioner-password-file /step-ca/secrets/password && cp /step-ca/certs/root_ca.crt /certs/local-root-ca.crt"
+      - ./step_ca_data:/step-ca:ro
+      - ./step-ca/domains.txt:/config/domains.txt:ro
+      - ./step-ca/issue-certificates.sh:/usr/local/bin/issue-local-certificates:ro
+      - ./nginx/certificates:/certs
+    entrypoint: ["/bin/sh", "/usr/local/bin/issue-local-certificates"]
 
   php74:
     container_name: "php74"
@@ -60,34 +73,6 @@ services:
       - ${SITES_PATH}:/var/www/html
       - ${COMPOSER_AUTH_PATH}:/home/developer/.composer/auth.json:ro
 
-  php80:
-    container_name: "php80"
-    restart: unless-stopped
-    extra_hosts:
-      - "localhost:host-gateway"
-    build:
-      context: "./php"
-      args:
-        PHP_VERSION: "8.0"
-    volumes:
-      - ./php/80/php.ini:/usr/local/etc/php/conf.d/99-custom.ini
-      - ${SITES_PATH}:/var/www/html
-      - ${COMPOSER_AUTH_PATH}:/home/developer/.composer/auth.json:ro
-
-  php81:
-    container_name: "php81"
-    restart: unless-stopped
-    extra_hosts:
-      - "localhost:host-gateway"
-    build:
-      context: "./php"
-      args:
-        PHP_VERSION: "8.1"
-    volumes:
-      - ./php/81/php.ini:/usr/local/etc/php/conf.d/99-custom.ini
-      - ${SITES_PATH}:/var/www/html
-      - ${COMPOSER_AUTH_PATH}:/home/developer/.composer/auth.json:ro
-
   php84:
     container_name: "php84"
     restart: unless-stopped
@@ -100,7 +85,6 @@ services:
     volumes:
       - ./php/84/php.ini:/usr/local/etc/php/conf.d/99-custom.ini
       - ${SITES_PATH}:/var/www/html
-      - /Users/will/Projects/quizengine:/var/www/html/gas-care/wp-content/plugins/quizengine
       - ${COMPOSER_AUTH_PATH}:/home/developer/.composer/auth.json:ro
 
   php85:

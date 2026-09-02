@@ -1,0 +1,4 @@
+# Add this to the step-ca folder
+# Add one base domain per line. The certificate will include both the base
+# domain and its wildcard, for example gascare.test & *.gascare.test
+gascare.test
