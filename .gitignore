@@ -23,5 +23,8 @@ step_ca_data/
 # Mailpit nginx
 !nginx/conf.d/mailpit.conf
 
+# StepCA domains
+step-ca/domains.txt
+
 # Main compose file
 /docker-compose.yml
