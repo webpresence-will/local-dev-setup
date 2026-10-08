@@ -2,6 +2,11 @@ ARG PHP_VERSION=8.5
 
 FROM php:${PHP_VERSION}-fpm
 
+# Debian bullseye (PHP 7.4/8.0 images) has moved to archive.debian.org
+RUN if grep -q bullseye /etc/os-release; then \
+        sed -i 's|deb.debian.org|archive.debian.org|g' /etc/apt/sources.list; \
+    fi
+
 # System dependencies
 RUN apt-get update && apt-get install -y \
     libzip-dev \
@@ -15,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     ca-certificates \
     gnupg \
+    less \
     && rm -rf /var/lib/apt/lists/*
 
 # Node.js
