@@ -47,7 +47,8 @@ RUN docker-php-ext-install \
     zip \
     intl \
     gd \
-    sockets
+    sockets \
+    pcntl
 
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
