@@ -21,7 +21,13 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     gnupg \
     less \
+    default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
+
+# MySQL client (used by Laravel schema load/dump). The MariaDB client verifies
+# TLS certificates by default, which fails against the local MySQL server's
+# self-signed certificate.
+RUN printf '[client]\nssl-verify-server-cert=0\n' > /etc/mysql/conf.d/zz-local-dev.cnf
 
 # Node.js
 RUN mkdir -p /etc/apt/keyrings \
